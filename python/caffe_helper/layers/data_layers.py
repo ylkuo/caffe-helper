@@ -28,6 +28,7 @@ def pad_with_tblr(img, t, b, l, r,
 def pad_with_min_shape(img, min_shape, border_mode=cv2.BORDER_CONSTANT,
                        border_value=0):
     """"""
+    print min_shape
     hh, ww = min_shape
     h, w = img.shape[:2]
     if hh <= h and ww <= w:
@@ -145,7 +146,7 @@ class ImageTransformer(object):
             pad_with_tblr(img, to, bo, le, ri,
                           self.border_mode_, self.border_value_)
             self.logger.debug("transform pad")
-        if self.minshape_ is not None:
+        if self.minshape_ != 0:
             img = pad_with_min_shape(img, self.minshape_,
                                self.border_mode_, self.border_value_)
 
@@ -220,7 +221,7 @@ class ImageTransformer(object):
 class BaseDataLayer(Layer):
 
     def setup(self, bottom, top):
-        param = eval(self.param_str_)
+        param = eval(self.param_str)
         self.batch_size_ = param['batch_size']
         self.data_setup(bottom, top)
         top[0].reshape(*self.data_.shape)
@@ -276,7 +277,7 @@ class ImageDataLayer(BaseDataLayer):
         return self.transformer_.transform(img)
 
     def data_setup(self, bottom, top):
-        param = eval(self.param_str_)
+        param = eval(self.param_str)
         self.source_ = param['source']
         self.column_id_ = param.get('column_id_', 0)
         self.root_ = param.get('root', '')
@@ -344,7 +345,7 @@ class MatNcImageDataLayer(ImageDataLayer):
 
     def data_setup(self, bottom, top):
         super(MatNcImageDataLayer, self).data_setup(bottom, top)
-        param = eval(self.param_str_)
+        param = eval(self.param_str)
         self.key_ = param['key']
         from scipy.io import loadmat
         l = loadmat(self.root_ + self.lines_[0])[self.key_]
@@ -357,7 +358,7 @@ class HDF5Layer(BaseDataLayer):
 
     def data_setup(self, bottom, top):
         import h5py
-        param = eval(self.param_str_)
+        param = eval(self.param_str)
         self.source_ = param['source']
         self.path_h5_ = param['path_h5']
         self.column_id_ = param.get('column_id_', 0)
@@ -416,7 +417,7 @@ class ScalarDataLayer(BaseDataLayer):
         return locals()
 
     def data_setup(self, bottom, top):
-        param = eval(self.param_str_)
+        param = eval(self.param_str)
         self.source_ = param['source']
         self.column_id_ = param.get('column_id', 0)
         self.shuffle_ = param.get('shuffle', False)

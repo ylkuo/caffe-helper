@@ -10,7 +10,7 @@ def _force_c_order_array(x):
 class DownSamplingLayer(Layer):
 
     def setup(self, bottom, top):
-        param = eval(self.param_str_)
+        param = eval(self.param_str)
         self.factor_ = param['factor']
         self.reshape(bottom, top)
 
@@ -80,7 +80,7 @@ class MorphologyLayer(Layer):
     """
 
     def setup(self, bottom, top):
-        param = eval(self.param_str_)
+        param = eval(self.param_str)
         self.op_ = param['op'].upper()
         kernel_ = param['kernel']
         if kernel_ == '4nn':

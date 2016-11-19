@@ -3,7 +3,9 @@ from pycuda.elementwise import ElementwiseKernel
 
 import caffe
 from caffe import Layer
-import caffe.pycuda_util as pu
+import caffe.pycuda_util 
+import pycuda.gpuarray
+import caffe._pycuda_util as pu
 
 from vision_layers import DownSamplingLayer  # For backward compatibility
 
@@ -16,7 +18,7 @@ class ReshapeLayer(Layer):
     """
 
     def setup(self, bottom, top):
-        param = eval(self.param_str_)
+        param = eval(self.param_str)
         self.shape_ = param['shape']
         for i, s in enumerate(self.shape_):
             if i != 0 and s < 0:
@@ -46,7 +48,7 @@ class ReshapeLayer(Layer):
 class LogLayer(Layer):
 
     def setup(self, bottom, top):
-        param = eval(self.param_str_)
+        param = eval(self.param_str)
         self.offset_ = param['offset']
         self.reshape(bottom, top)
         self.k_log_ = ElementwiseKernel(
@@ -84,7 +86,7 @@ class MatrixMultLayer(Layer):
         self.outshape_ = r1, c2
 
     def setup(self, bottom, top):
-        param = eval(self.param_str_)
+        param = eval(self.param_str)
         self.t1_ = param.get('t1', False)
         self.t2_ = param.get('t2', False)
         self.reshape(bottom, top)
@@ -145,7 +147,7 @@ class ParameterLayer(Layer):
     """
 
     def setup(self, bottom, top):
-        param = eval(self.param_str_)
+        param = eval(self.param_str)
         self.shape_ = param['shape']
         assert len(bottom) == 0
         assert len(top) == 1
@@ -183,7 +185,7 @@ class ReductionLayer(Layer):
     """
 
     def setup(self, bottom, top):
-        param = eval(self.param_str_)
+        param = eval(self.param_str)
         self.axis_ = param['axis']
         self.op_ = param['op']
         if self.op_ not in ['mean', 'sum']:
@@ -261,7 +263,7 @@ class LpNormalizationLayer(Layer):
         self.f_backward = tn.function([s_x, s_dz], tn.Out(s_grad, borrow=True))
 
     def setup(self, bottom, top):
-        param = eval(self.param_str_)
+        param = eval(self.param_str)
         self.axis_ = param.get('axis', None)
         self.p_ = param.get('p', 1)
         self.reshape(bottom, top)
@@ -297,7 +299,7 @@ class SliceByArrayLayer(Layer):
 
     def setup(self, bottom, top):
         from scipy.io import loadmat
-        param = eval(self.param_str_)
+        param = eval(self.param_str)
         self.indexes_ = loadmat(param['path_mat'])[param['key']].flatten()
         assert np.unique(self.indexes_).size == self.indexes_.size, \
             'Indexes must be unique each other.'
@@ -326,7 +328,7 @@ class SliceByArrayLayer(Layer):
 class BroadcastLayer(Layer):
 
     def setup(self, bottom, top):
-        param = eval(self.param_str_)
+        param = eval(self.param_str)
         self.axis_ = param['axis']
         self.num_ = param['num']
         self.reshape(bottom, top)
@@ -351,7 +353,7 @@ class BroadcastLayer(Layer):
 class TileLayer(Layer):
 
     def setup(self, bottom, top):
-        param = eval(self.param_str_)
+        param = eval(self.param_str)
         self.axis_ = param['axis']
         self.num_ = param['num']
         self.reshape(bottom, top)
@@ -379,7 +381,7 @@ class TileLayer(Layer):
 class AXPBLayer(Layer):
 
     def setup(self, bottom, top):
-        param = eval(self.param_str_)
+        param = eval(self.param_str)
         self.a_ = param.get('a', 1.0)
         self.b_ = param.get('b', 0.0)
 

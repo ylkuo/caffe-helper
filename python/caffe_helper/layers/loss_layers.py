@@ -7,7 +7,8 @@ from pycuda.elementwise import ElementwiseKernel
 
 import caffe
 from caffe import Layer
-import caffe.pycuda_util as pu
+import caffe.pycuda_util
+import caffe._pycuda_util as pu
 
 dtype = np.float32
 
@@ -22,7 +23,7 @@ class ScaleInvariantL2LossLayer(Layer):
         assert len(bottom) == 3
         assert len(top) == 1
         # parameter
-        param = eval(self.param_str_)
+        param = eval(self.param_str)
         self.lambda_ = param['lambda']
         self.clip_gradient_ = param.get('clip_gradient', None)
         # Create CUDA function
@@ -176,7 +177,7 @@ class DSSIMLayer(Layer):
         # parameter
         self.K_ = [0.01, 0.03]
         self.L_ = 1.0
-        param = eval(self.param_str_)
+        param = eval(self.param_str)
         self.hsize_ = param.get('hsize', 11)
         self.sigma_ = param.get('sigma', 1.5)
         assert self.hsize_ % 2 == 1
